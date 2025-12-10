@@ -2574,27 +2574,35 @@ function attachLampiarLegendHandlers() {
           return resp.json();
         })
         .then(data => {
-          console.log("✓ Dados carregados da API (Google Forms)");
-          inicializarComDados(data);
+          if (Array.isArray(data) && data.length > 0) {
+            console.log("✓ Dados carregados da API (Google Forms)");
+            inicializarComDados(data);
+          } else {
+            console.warn("⚠ API retornou vazio, usando arquivo local (pessoas.json)");
+            carregarFallbackLocal();
+          }
         })
         .catch(err => {
           console.warn("⚠ Falha ao carregar API, tentando arquivo local...", err);
-          // Fallback para arquivo local
-          fetch(FALLBACK_JSON)
-            .then(resp => {
-              if (!resp.ok) {
-                throw new Error("Erro ao carregar pessoas.json");
-              }
-              return resp.json();
-            })
-            .then(data => {
-              console.log("✓ Dados carregados do arquivo local");
-              inicializarComDados(data);
-            })
-            .catch(fallbackErr => {
-              console.error("✗ Erro ao carregar dados:", fallbackErr);
-              summary.textContent = "Erro ao carregar dados de alumni.";
-            });
+          carregarFallbackLocal();
+        });
+    }
+
+    function carregarFallbackLocal() {
+      fetch(FALLBACK_JSON)
+        .then(resp => {
+          if (!resp.ok) {
+            throw new Error("Erro ao carregar pessoas.json");
+          }
+          return resp.json();
+        })
+        .then(data => {
+          console.log("✓ Dados carregados do arquivo local");
+          inicializarComDados(data);
+        })
+        .catch(fallbackErr => {
+          console.error("✗ Erro ao carregar dados:", fallbackErr);
+          summary.textContent = "Erro ao carregar dados de alumni.";
         });
     }
 
