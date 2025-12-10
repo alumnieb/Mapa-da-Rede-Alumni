@@ -1397,7 +1397,8 @@ const lampiarCities = [
       const uf = (p.estado_sigla || "").toUpperCase().trim();
 
       if (uf) {
-        return "bandeiras/" + uf + ".png";
+        // Usa CDN online para as bandeiras (mais confiável)
+        return "https://raw.githubusercontent.com/lipis/flag-icons/main/flags/4x3/" + uf.toLowerCase() + ".svg";
       }
 
       if (p.avatar_url) {
